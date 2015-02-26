@@ -11,7 +11,7 @@
 // searls
 
 module.exports = function(robot) {
-  robot.helpCommand("brobbot google [me] <query>", "Googles <query> and returns 1st result's URL");
+  robot.helpCommand("brobbot google [me] `query`", "Googles `query` and returns 1st result's URL");
 
   robot.respond(/(google)( me)? (.*)/i, function(msg) {
     googleMe(msg, msg.match[3], function(url) {
