@@ -24,7 +24,7 @@ module.exports = function(robot) {
       .query({q: query})
       .get()(function(err, res, body) {
         var match = body.match(/class="r"><a href="\/url\?q=([^"]*)(&amp;sa.*)">/);
-        cb(match ? match[1] : "Sorry, Google had zero results for '//{query}'");
+        cb(match ? decodeURIComponent(match[1]) : "Sorry, Google had zero results for '" + query + "'");
       });
   }
 };
