@@ -5,26 +5,27 @@
 // None
 //
 // Configuration:
-// None
-//
-// Author:
-// searls
+//   BROBBOT_GOOGLE_REFERER - the referer URL to pass to the Google API
 
 module.exports = function(robot) {
   robot.helpCommand("brobbot google [me] `query`", "Googles `query` and returns 1st result's URL");
 
-  robot.respond(/(google)( me)? (.*)/i, function(msg) {
-    googleMe(msg, msg.match[3], function(url) {
-      msg.send(url);
-    });
-  });
+  var REFERER = process.env.BROBBOT_GOOGLE_REFERER || 'https://npmjs.org/package/brobbot-google';
 
-  function googleMe(msg, query, cb) {
-    return msg.http('http://www.google.com/search')
-      .query({q: query})
+  robot.respond(/(google)( me)? (.*)/i, function(msg) {
+    var query = msg.match[3];
+
+    return msg.http('https://ajax.googleapis.com/ajax/services/search/web')
+      .query({v: '1.0', q: query})
+      .header('Referer', REFERER)
       .get()(function(err, res, body) {
-        var match = body.match(/class="r"><a href="\/url\?q=([^"]*)(&amp;sa.*)">/);
-        cb(match ? decodeURIComponent(match[1]) : "Sorry, Google had zero results for '" + query + "'");
+        var results = JSON.parse(body).responseData.results;
+        if (results && results.length > 0) {
+          msg.send(results[0].url);
+        }
+        else {
+          msg.send("Sorry, Google had zero results for '" + query + "'");
+        }
       });
-  }
+  });
 };
