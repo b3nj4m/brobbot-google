@@ -12,7 +12,7 @@ module.exports = function(robot) {
 
   var REFERER = process.env.BROBBOT_GOOGLE_REFERER || 'https://npmjs.org/package/brobbot-google';
 
-  robot.respond(/(google)( me)? (.*)/i, function(msg) {
+  robot.respond(/^(google)( me)? (.*)/i, function(msg) {
     var query = msg.match[3];
 
     return msg.http('https://ajax.googleapis.com/ajax/services/search/web')
